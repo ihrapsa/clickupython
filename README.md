@@ -37,7 +37,23 @@ t = c.create_task("list_id", name="Test task", due_date="march 2 2021")
 
 print(t.name)
 
+# Example query to get all tasks and subtasks names based on a custom field
+
+c = client.ClickUpClient(API_KEY)
+
+query_id = "25c397de-a2db-4130-b10b-b8d750fda878"
+query_op = "="
+query_val = 2993
+
+query_fields = [(query_id, "=", query_val)]
+
+t = c.get_tasks("list_id", custom_fields = query_fields, subtasks = True)
+
+for task in t.tasks:
+    print(task.name)
+
 ```
+
 
 _For more examples, please refer to the [Documentation](https://clickupython.readthedocs.io/en/latest/)_
 
@@ -46,9 +62,17 @@ _For more examples, please refer to the [Documentation](https://clickupython.rea
 ### Task
 
 - `get_task(task_id)`
-- `get_tasks(list_id, archived, page, order_by, reverse, subtasks, statuses, include_closed, assignees, due_date_gt, due_date_lt, date_created_gt, date_created_lt, date_updated_gt, date_updated_lt)`
-- `create_task(list_id, name, description, priority, assignees, tags, status, due_date, start_date, notify_all)`
-- `update_task(task_id, name, description, status, priority, time_estimate, archived, add_assignees,remove_assignees`
+- `get_tasks(list_id, archived, page, order_by, reverse, subtasks, statuses, include_closed, assignees, due_date_gt, due_date_lt, date_created_gt, date_created_lt, date_updated_gt, date_updated_lt, custom_fields)`
+- `create_task(list_id, name, description, priority, assignees, tags, status, due_date, start_date, notify_all, parent)`
+- `update_task(task_id, name, description, status, priority, time_estimate, archived, add_assignees,remove_assignees)`
+
+### Subtask
+- `parent` argument takes a task id under which a subtask can be created
+
+### Query
+
+- `custom_fields` argument takes a stringified JSON array of objects that must include these fields: `field_id`, `operator`, `value`.  
+`custom_fields = '[("field_id","operator","value"), (...)]'`. Check official ClickUp [docs](https://clickup.com/api/developer-portal/filtertasks/) for more info related to filtering and operators.
 
 ### List
 

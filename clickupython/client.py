@@ -590,6 +590,7 @@ class ClickUpClient:
         date_created_lt: str = None,
         date_updated_gt: str = None,
         date_updated_lt: str = None,
+        custom_fields: List[str] = None,
     ) -> models.Tasks:
 
         """The maximum number of tasks returned in this response is 100. When you are paging this request, you should check list limit
@@ -624,7 +625,7 @@ class ClickUpClient:
             :date_updated_gt (str, optional):
                 Retrieve tasks where the last update date is greater than the supplied date. Defaults to None.
             :date_updated_lt (str, optional): Retrieve tasks where the last update date is greater than the supplied date. Defaults to None.
-
+            :custom_fields (List[str], optional): Retrieve tasks where custom_field (based on its 'id') matches the 'operator' as respect to the 'value'. Defaults to None.
         Raises:
             :exceptions.ClickupClientError: Invalid order_by value
 
@@ -667,6 +668,13 @@ class ClickUpClient:
             supplied_values.append(f"date_updated_lt={date_updated_lt}")
         if subtasks:
             supplied_values.append(f"subtasks=true")
+        if custom_fields:
+            custom_query_list = []
+            for field in custom_fields:
+                custom_query_dict = {"field_id": field[0], "operator": field[1], "value": field[2]}
+                custom_query_list.append(custom_query_dict)
+            formatted_custom_fields = json.dumps(custom_query_list)  
+            supplied_values.append(f"custom_fields={formatted_custom_fields}")
 
         joined_url = f"task?{'&'.join(supplied_values)}"
 
@@ -687,6 +695,7 @@ class ClickUpClient:
         due_date: str = None,
         start_date: str = None,
         notify_all: bool = True,
+        parent: str = None,
     ) -> models.Task:
 
         """[summary]
@@ -702,6 +711,7 @@ class ClickUpClient:
             :due_date (str, optional): [description]. Defaults to None.
             :start_date (str, optional): [description]. Defaults to None.
             :notify_all (bool, optional): [description]. Defaults to True.
+            :parent (str, optional): [description]. Defaults to None
 
         Raises:
             :exceptions.ClickupClientError: [description]
